@@ -1,0 +1,23 @@
+Api_test/         # 项目根目录
+├── config/                 # 配置文件目录（如环境配置）
+│   └── config.yaml
+		定义接口地址、token、数据库连接等信息
+		base_url: "http://localhost:8000"
+		token: "abcdef123456"
+├── data/                   # 测试数据（如 JSON、CSV 等）
+│   └── order_data.json
+├── testcases/              # 测试用例目录
+│   └── test_order.py
+├── utils/                  # 工具模块，如封装的请求函数
+│   └── request_handler.py
+├── conftest.py             # pytest 的公共配置和 fixture
+	如果你需要在测试前登录、写入数据库等，可以用 fixture：
+├── requirements.txt        # 所有依赖包
+       列出所需库：
+	pytest
+	requests
+	pytest-ordering
+	allure-pytest
+	PyYAML
+	安装命令：pip install -r requirements.txt 
+└── README.md               # 项目说明文档
