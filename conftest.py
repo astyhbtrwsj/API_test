@@ -54,11 +54,13 @@
 
 
 import pytest
-from utils.request_handler import load_yaml
+import logging
+from utils.request_handler import load_yaml, send_request
 from pathlib import Path
+from utils.logger import get_logger
+from utils.assertions import assert_success_response, assert_error_response
 
-PROJECT_ROOT = Path(__file__).resolve().parent
-print("项目根目录",PROJECT_ROOT)
+logger = get_logger(__name__)
 
 #登录token的fixture（多角色账号）
 #对应需要登录的用例
@@ -100,11 +102,21 @@ print("项目根目录",PROJECT_ROOT)
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_env():
-    print("测试环境初始化...")
+    logger.info("测试环境初始化...")
     yield
-    print("测试环境清理完成")
+    logger.info("测试环境清理完成")
 
+#5.8
+#conftest.py文件读取yaml配置，是因为yaml配置有很多环境（不止一个基本url），
+# 其他用例可能会用到其他的环境（比如：测试环境地址、预发布环境地址、服务器地址、重置数据地址）
 @pytest.fixture(scope="session", autouse=True)
 def api_config():
     """读取接口自动化配置。"""
     return load_yaml()
+
+@pytest.fixture(scope="function", autouse=True)
+def reset_mock_data():
+    """每条用例执行前，通过 HTTP 接口重置测试数据。"""
+    reset_response = send_request("post","/test/reset")
+    assert_success_response(reset_response, "测试数据已重置")
+    yield

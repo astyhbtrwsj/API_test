@@ -44,6 +44,10 @@
 import requests
 import yaml
 from pathlib import Path
+import logging
+from utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 config_path = Path(__file__).resolve().parents[1]/"config"/"config.yaml"
 #Path(__file__).resolve()获取当前文件的绝对路径
@@ -59,10 +63,13 @@ config = load_yaml()
 BASE_URL = config["base_url"]
 
 def send_request(method, endpoint, **kwargs):
+    logger.info(f"请求方法：%s",method)
+    logger.info(f"请求路径：%s",endpoint)
+    logger.info(f"请求参数：%s",kwargs)
     headers = kwargs.pop("headers", {})
     url = f"{BASE_URL}{endpoint}"
     response = requests.request(method, url, headers=headers, **kwargs)
     return response
 
-response = send_request("get","/health")
-print(response.elapsed.total_seconds())
+# response = send_request("get","/health")
+# print(response.elapsed.total_seconds())
